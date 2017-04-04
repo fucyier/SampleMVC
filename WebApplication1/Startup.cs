@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using WebApplication1.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 namespace WebApplication1
 {
     public class Startup
@@ -29,7 +31,10 @@ namespace WebApplication1
         {
             // Add framework services.
 
-            services.AddTransient<IProductRepository,FakeProductRepository>();
+            services.AddDbContext<ApplicationDbContext>(options =>
+options.UseSqlServer(
+Configuration["Data:SportStoreProducts:ConnectionString"]));
+            services.AddTransient<IProductRepository, EFProductRepository>();
             services.AddMvc();
         }
 
@@ -50,8 +55,14 @@ namespace WebApplication1
             }
 
             app.UseStaticFiles();
-
-            app.UseMvcWithDefaultRoute();
+            // app.UseMvcWithDefaultRoute();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                name: "default",
+                template: "{controller=Product}/{action=List}/{id?}");
+            });
+            SeedData.EnsurePopulated(app);
         }
     }
 }
