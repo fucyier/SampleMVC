@@ -17,10 +17,11 @@ namespace WebApplication1.Controllers
             repository = repo;
         }
 
-        public ViewResult List(int page = 1)
+        public ViewResult List(string category,int page = 1)
             => View(new ProductListViewModel
             {
                 Products = repository.Products.OrderBy(p => p.ProductID)
+                .Where(p=>p.Category==null||p.Category==category)
                 .Skip((page - 1) * PageSize)
                 .Take(PageSize),
                 PagingInfo = new PagingInfo
@@ -28,7 +29,8 @@ namespace WebApplication1.Controllers
                     CurrentPage = page,
                     ItemsPerPage = PageSize,
                     TotalItems = repository.Products.Count()
-                }
+                },
+                CurrentCategory=category
             }
         );
 

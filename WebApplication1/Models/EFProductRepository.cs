@@ -13,7 +13,7 @@ namespace WebApplication1.Models
         {
             context = ctx;
         }
-        public int MyProperty { get; set; }
+     
         public IEnumerable<Product> Products  { get { return context.Products; }  }
 
     }
